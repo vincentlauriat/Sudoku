@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sudoku for macOS — a native SwiftUI game that can play itself</title>
+<meta name="description" content="A native macOS Sudoku game written in pure SwiftUI. Four difficulty levels, guaranteed-unique puzzles, and an auto-play mode that solves the board by itself. Free, open source, signed & notarized.">
+<link rel="icon" type="image/png" href="assets/icon.png">
+<style>
+  :root {
+    --bg: #0b1020;
+    --bg-card: #141b31;
+    --text: #e8ecf6;
+    --muted: #9aa5bf;
+    --accent: #4d7cfe;
+    --green: #2ec770;
+    --border: #232d4d;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  header { text-align: center; padding: 72px 0 40px; }
+  header img.icon { width: 128px; height: 128px; border-radius: 28px; box-shadow: 0 12px 40px rgba(77,124,254,.35); }
+  h1 { font-size: 2.6rem; margin: 24px 0 8px; letter-spacing: -.02em; }
+  .tagline { font-size: 1.25rem; color: var(--muted); max-width: 620px; margin: 0 auto; }
+  .buttons { margin: 32px 0 8px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; padding: 13px 26px; border-radius: 12px;
+    font-weight: 600; text-decoration: none; font-size: 1.02rem;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 6px 24px rgba(77,124,254,.4); }
+  .btn-secondary { background: var(--bg-card); color: var(--text); border: 1px solid var(--border); }
+  .fineprint { color: var(--muted); font-size: .88rem; }
+  .shot { display: block; max-width: 100%; border-radius: 14px; border: 1px solid var(--border); margin: 48px auto 0; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  section { padding: 56px 0 8px; }
+  h2 { font-size: 1.7rem; margin-bottom: 20px; letter-spacing: -.01em; }
+  h2 .em { color: var(--green); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px 22px;
+  }
+  .card h3 { font-size: 1.05rem; margin-bottom: 6px; }
+  .card p { color: var(--muted); font-size: .95rem; }
+  .steps { counter-reset: step; }
+  .step { display: flex; gap: 16px; margin-bottom: 22px; }
+  .step .n {
+    counter-increment: step; flex: 0 0 36px; height: 36px; border-radius: 50%;
+    background: var(--accent); color: #fff; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step .n::before { content: counter(step); }
+  .step p { color: var(--muted); }
+  .step strong { color: var(--text); }
+  code, pre {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+  }
+  code { padding: 2px 7px; font-size: .9em; }
+  pre { padding: 18px 20px; overflow-x: auto; margin: 16px 0; }
+  pre code { background: none; border: none; padding: 0; }
+  a { color: var(--accent); }
+  footer { text-align: center; padding: 64px 0 40px; color: var(--muted); font-size: .9rem; }
+  footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <img class="icon" src="assets/icon.png" alt="Sudoku app icon">
+  <h1>Sudoku for macOS</h1>
+  <p class="tagline">A native SwiftUI Sudoku with four difficulty levels — and a mode where the app
+  <strong style="color:var(--green)">plays all by itself</strong>, cell by cell, like a human would.</p>
+  <div class="buttons">
+    <a class="btn btn-primary" href="https://github.com/vincentlauriat/Sudoku/releases/latest">⬇︎&nbsp; Download for macOS</a>
+    <a class="btn btn-secondary" href="https://github.com/vincentlauriat/Sudoku">View on GitHub</a>
+  </div>
+  <p class="fineprint">Free &amp; open source (MIT) · macOS 14+ · signed &amp; notarized DMG · no dependencies</p>
+  <img class="shot" src="assets/screenshot.png" alt="Sudoku running on macOS: the board mid auto-solve, side panel with difficulty levels and speed slider">
+</header>
+
+<section class="wrap">
+  <h2>Features</h2>
+  <div class="grid">
+    <div class="card"><h3>🎚️ Four difficulty levels</h3><p>Easy, Medium, Hard, Expert — from 40 down to 24 clues. Every puzzle is generated fresh and verified to have exactly one solution.</p></div>
+    <div class="card"><h3>🤖 Auto-play mode</h3><p>Press play and watch the app solve the board itself at up to 20 moves per second, correcting your mistakes along the way. Pause and resume anytime.</p></div>
+    <div class="card"><h3>⌨️ Keyboard first</h3><p>Digits 1–9, arrow keys, Delete, N for pencil marks. Or play entirely with the mouse and the number pad.</p></div>
+    <div class="card"><h3>🔍 Smart highlighting</h3><p>Row, column and box peers, same-value cells, and conflicts in red — the scanning aids you expect from a modern Sudoku.</p></div>
+    <div class="card"><h3>✏️ Pencil marks</h3><p>Toggleable notes mode; notes are automatically cleaned up as the surrounding cells get solved.</p></div>
+    <div class="card"><h3>💡 Hints, timer &amp; errors</h3><p>A hint button that fills the selected cell, a timer, and an error counter that flags wrong digits in red instantly.</p></div>
+  </div>
+</section>
+
+<section class="wrap">
+  <h2>How it plays <span class="em">by itself</span></h2>
+  <div class="steps">
+    <div class="step"><span class="n"></span><p><strong>The solution is known before you play.</strong> The generator builds a complete valid grid with randomized backtracking, then digs holes one by one — keeping each hole only if a counting solver proves the puzzle still has exactly one solution.</p></div>
+    <div class="step"><span class="n"></span><p><strong>Moves are chosen like a human would.</strong> Auto-play repeatedly picks the empty cell with the fewest remaining candidates (the MRV heuristic — “find the cell where only one digit fits”), producing an organic cascade instead of a mechanical left-to-right sweep. Your wrong entries get corrected first.</p></div>
+    <div class="step"><span class="n"></span><p><strong>Everything is a cancellable Swift Task.</strong> The loop highlights the cell, waits, plays the digit with a small animation, and re-reads the speed slider on every move — so pause, resume and live speed changes just work.</p></div>
+  </div>
+  <p>Full technical write-up: <a href="https://github.com/vincentlauriat/Sudoku/blob/main/docs/AUTOPLAY.md">docs/AUTOPLAY.md</a> — bitmask solver, uniqueness guarantee, move ordering and the animation loop.</p>
+</section>
+
+<section class="wrap">
+  <h2>Build from source</h2>
+  <pre><code>brew install xcodegen
+git clone https://github.com/vincentlauriat/Sudoku.git
+cd Sudoku
+xcodegen generate
+open Sudoku.xcodeproj   # then ⌘R</code></pre>
+  <p>The repo is meant as an <strong>example project</strong>: three strict layers (pure engine, <code>@MainActor</code> view model, SwiftUI views), unit tests, programmatic app icon, and a sign-notarize-staple release script. Start with the <a href="https://github.com/vincentlauriat/Sudoku/blob/main/ARCHITECTURE_EN.md">architecture guide</a>.</p>
+</section>
+
+<footer>
+  <p>MIT © Vincent Lauriat · <a href="https://github.com/vincentlauriat/Sudoku">github.com/vincentlauriat/Sudoku</a></p>
+</footer>
+
+</body>
+</html>

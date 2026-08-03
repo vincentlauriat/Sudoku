@@ -1,0 +1,16 @@
+# Doc de travail (règle DevApps)
+COMMANDS.md
+MEMORY.md
+CHANGES.md
+TODOS.md
+PLAN.md
+
+# Xcode / build
+*.xcodeproj
+build/
+DerivedData/
+release/
+*.dmg
+*.zip
+.DS_Store
+.omc/
