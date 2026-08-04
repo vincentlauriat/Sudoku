@@ -12,13 +12,15 @@ struct SidePanel: View {
             toolsSection
             Divider()
             autoPlaySection
+            Divider()
+            statsSection
             Spacer()
         }
     }
 
     private var newGameSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Nouvelle partie")
+            Text("new-game.title")
                 .font(.headline)
             ForEach(Difficulty.allCases) { level in
                 Button {
@@ -46,7 +48,7 @@ struct SidePanel: View {
             Button {
                 game.erase()
             } label: {
-                Label("Effacer", systemImage: "delete.left")
+                Label("pad.erase", systemImage: "delete.left")
                     .frame(maxWidth: .infinity)
             }
         }
@@ -55,27 +57,45 @@ struct SidePanel: View {
     private var toolsSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Toggle(isOn: $game.notesMode) {
-                Label("Notes (N)", systemImage: "pencil")
+                Label("tools.notes", systemImage: "pencil")
             }
             .toggleStyle(.switch)
             Button {
                 game.hint()
             } label: {
-                Label("Indice", systemImage: "lightbulb")
+                Label("tools.hint", systemImage: "lightbulb")
                     .frame(maxWidth: .infinity)
+            }
+            HStack(spacing: 6) {
+                Button {
+                    game.undo()
+                } label: {
+                    Label("tools.undo", systemImage: "arrow.uturn.backward")
+                        .frame(maxWidth: .infinity)
+                }
+                .keyboardShortcut("z", modifiers: .command)
+                .disabled(!game.canUndo)
+                Button {
+                    game.redo()
+                } label: {
+                    Label("tools.redo", systemImage: "arrow.uturn.forward")
+                        .frame(maxWidth: .infinity)
+                }
+                .keyboardShortcut("z", modifiers: [.command, .shift])
+                .disabled(!game.canRedo)
             }
         }
     }
 
     private var autoPlaySection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Mode Auto")
+            Text("auto.title")
                 .font(.headline)
             Button {
                 game.toggleAutoPlay()
             } label: {
                 Label(
-                    game.isAutoPlaying ? "Pause" : "Résoudre tout seul",
+                    game.isAutoPlaying ? "auto.pause" : "auto.solve",
                     systemImage: game.isAutoPlaying ? "pause.fill" : "play.fill"
                 )
                 .frame(maxWidth: .infinity)
@@ -94,9 +114,25 @@ struct SidePanel: View {
                 Image(systemName: "hare")
             }
             .foregroundStyle(.secondary)
-            Text("Vitesse : \(String(format: "%.2f", game.autoSpeed)) s/coup")
+            Text(String(format: String(localized: "auto.speed"), game.autoSpeed))
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
+    }
+
+    private var statsSection: some View {
+        let level = game.stats[game.difficulty.rawValue] ?? LevelStats()
+        return VStack(alignment: .leading, spacing: 4) {
+            Text("stats.title")
+                .font(.headline)
+            Text(
+                level.bestTime.map {
+                    String(format: String(localized: "stats.best"), GameViewModel.timeString($0))
+                } ?? String(localized: "stats.none")
+            )
+            Text(String(format: String(localized: "stats.won"), level.gamesWon))
+        }
+        .font(.callout)
+        .foregroundStyle(.secondary)
     }
 }

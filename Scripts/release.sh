@@ -80,6 +80,15 @@ codesign_ts() {
   return 1
 }
 
+echo "→ Codesigning Sparkle.framework nested binaries (deepest first)"
+SPARKLE_FW="$STAGING/Contents/Frameworks/Sparkle.framework"
+SPARKLE_VER="$SPARKLE_FW/Versions/B"
+codesign_ts "$SPARKLE_VER/Autoupdate"
+codesign_ts "$SPARKLE_VER/XPCServices/Downloader.xpc"
+codesign_ts "$SPARKLE_VER/XPCServices/Installer.xpc"
+codesign_ts "$SPARKLE_VER/Updater.app"
+codesign_ts "$SPARKLE_FW"
+
 echo "→ Codesigning the app with Developer ID + Hardened Runtime"
 codesign_ts "$STAGING"
 codesign --verify --strict --deep "$STAGING"
@@ -112,6 +121,60 @@ echo "→ Stapling notarization ticket to the DMG"
 xcrun stapler staple "$DMG"
 xcrun stapler validate "$DMG"
 
+# 6. Sign the DMG with the Sparkle EdDSA key (keychain account "Sudoku" —
+# distinct from other apps' keys, NEVER regenerate it) and refresh
+# docs/appcast.xml, served by GitHub Pages at
+# https://vincentlauriat.github.io/Sudoku/appcast.xml (the SUFeedURL).
+SPARKLE_VERSION="2.9.1"
+SPARKLE_TOOLS="$ROOT/.sparkle-tools"
+if [ ! -x "$SPARKLE_TOOLS/bin/sign_update" ]; then
+  echo "→ Fetching Sparkle $SPARKLE_VERSION tools (one-time setup)"
+  mkdir -p "$SPARKLE_TOOLS"
+  curl -fsSL "https://github.com/sparkle-project/Sparkle/releases/download/$SPARKLE_VERSION/Sparkle-$SPARKLE_VERSION.tar.xz" \
+    | tar -xJ -C "$SPARKLE_TOOLS"
+fi
+
+echo "→ Signing $DMG with the Sparkle EdDSA key"
+# `sign_update` returns: sparkle:edSignature="..." length="<bytes>"
+# (so we don't add `length=` ourselves on the <enclosure> — that would duplicate).
+SPARKLE_SIG_LINE=$("$SPARKLE_TOOLS/bin/sign_update" --account "Sudoku" "$DMG")
+
+# Sparkle compares <sparkle:version> against the running app's CFBundleVersion
+# (a monotonically increasing build number), NOT the marketing version.
+# Read the actual CFBundleVersion baked into the built .app.
+BUILD_NUMBER=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$APP/Contents/Info.plist")
+
+echo "→ Writing docs/appcast.xml (sparkle:version=$BUILD_NUMBER, shortVersionString=$VERSION)"
+PUB_DATE=$(date -R)
+cat > "$ROOT/docs/appcast.xml" <<APPCAST
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>Sudoku</title>
+    <link>https://vincentlauriat.github.io/Sudoku/appcast.xml</link>
+    <description>Sudoku release feed</description>
+    <language>en</language>
+    <item>
+      <title>v$VERSION</title>
+      <pubDate>$PUB_DATE</pubDate>
+      <sparkle:version>$BUILD_NUMBER</sparkle:version>
+      <sparkle:shortVersionString>$VERSION</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <sparkle:releaseNotesLink>https://github.com/vincentlauriat/Sudoku/releases/tag/v$VERSION</sparkle:releaseNotesLink>
+      <enclosure
+        url="https://github.com/vincentlauriat/Sudoku/releases/download/v$VERSION/Sudoku-$VERSION.dmg"
+        type="application/octet-stream"
+        $SPARKLE_SIG_LINE />
+    </item>
+  </channel>
+</rss>
+APPCAST
+
 DMG_SIZE=$(ls -lh "$DMG" | awk '{print $5}')
 echo ""
-echo "✅ Built, signed, notarized and stapled: $DMG ($DMG_SIZE)"
+echo "✅ Built, signed, notarized, stapled and Sparkle-signed: $DMG ($DMG_SIZE)"
+echo "✅ docs/appcast.xml written for v$VERSION"
+echo ""
+echo "Next steps to publish:"
+echo "  1. gh release create v$VERSION $DMG --title \"v$VERSION\" --notes-file release/release-notes-$VERSION.md"
+echo "  2. git add docs/appcast.xml && git commit -m 'docs: appcast for v$VERSION' && git push"

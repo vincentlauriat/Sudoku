@@ -4,6 +4,11 @@ options:
   deploymentTarget:
     macOS: "14.0"
   createIntermediateGroups: true
+  developmentLanguage: fr
+packages:
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    from: "2.9.1"
 targets:
   Sudoku:
     type: application
@@ -12,21 +17,28 @@ targets:
       - Sources
       - path: Resources
         buildPhase: resources
+    dependencies:
+      - package: Sparkle
     info:
       path: Sources/Info.plist
       properties:
         CFBundleName: Sudoku
         CFBundleDisplayName: Sudoku
         CFBundleIconFile: AppIcon
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSApplicationCategoryType: public.app-category.puzzle-games
         NSHumanReadableCopyright: "© Vincent Lauriat"
         NSMainStoryboardFile: ""
         LSMinimumSystemVersion: "14.0"
+        SUFeedURL: https://vincentlauriat.github.io/Sudoku/appcast.xml
+        SUPublicEDKey: "9s+yriMQ3QUliJxuy98FM7f3h83p14DjYgRBo6RdERY="
+        SUEnableAutomaticChecks: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: fr.lauriat.Sudoku
-        MARKETING_VERSION: "1.0.0"
-        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: "1.1.0"
+        CURRENT_PROJECT_VERSION: 2
         SWIFT_VERSION: "5.9"
         ENABLE_HARDENED_RUNTIME: YES
         GENERATE_INFOPLIST_FILE: NO

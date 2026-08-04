@@ -8,6 +8,7 @@ PLAN.md
 # Xcode / build
 *.xcodeproj
 build/
+.sparkle-tools/
 DerivedData/
 release/
 *.dmg

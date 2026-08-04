@@ -7,10 +7,10 @@ enum Difficulty: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .easy: return "Facile"
-        case .medium: return "Moyen"
-        case .hard: return "Difficile"
-        case .expert: return "Expert"
+        case .easy: return String(localized: "difficulty.easy")
+        case .medium: return String(localized: "difficulty.medium")
+        case .hard: return String(localized: "difficulty.hard")
+        case .expert: return String(localized: "difficulty.expert")
         }
     }
 

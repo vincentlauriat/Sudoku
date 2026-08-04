@@ -13,7 +13,7 @@
   <a href="https://github.com/vincentlauriat/Sudoku/releases/latest"><img src="https://img.shields.io/github/v/release/vincentlauriat/Sudoku?label=Release" alt="Release"></a>
   <img src="https://img.shields.io/badge/platform-macOS%2014%2B-blue" alt="Platform">
   <img src="https://img.shields.io/badge/Swift-5.9-orange" alt="Swift">
-  <img src="https://img.shields.io/badge/dependencies-none-brightgreen" alt="Dependencies">
+  <img src="https://img.shields.io/badge/dependencies-Sparkle%20only-brightgreen" alt="Dependencies">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-lightgrey" alt="License"></a>
 </p>
 
@@ -38,7 +38,12 @@ signed & notarized release pipeline.
 | 🔍 Smart highlighting | Row/column/box peers, same-value cells, conflicts in red |
 | 💡 Hints | Fills the selected (or a random) cell with the correct digit |
 | ⏱️ Timer & error counter | Wrong entries are shown in red and counted |
-| 🧪 Unit tests | Engine correctness: solving, uniqueness, generation, candidates |
+| 💾 Save & resume | The game in progress is saved automatically and restored on launch |
+| ↩️ Undo / redo | ⌘Z / ⇧⌘Z, snapshot-based — auto-solved games can't cheat the error counter |
+| 📊 Statistics | Best time and games won per difficulty (auto-played games don't count) |
+| 🌍 Localized UI | French and English |
+| 🔄 In-app updates | [Sparkle 2](https://sparkle-project.org) — EdDSA-signed appcast served by GitHub Pages |
+| 🧪 Unit tests | Engine correctness + view-model behaviour (11 tests) |
 
 ## Install
 
@@ -94,28 +99,32 @@ is in **[docs/AUTOPLAY.md](docs/AUTOPLAY.md)**.
 Sudoku/
 ├── project.yml              # xcodegen project definition (the .xcodeproj is generated)
 ├── Sources/
-│   ├── SudokuApp.swift      # @main entry point
-│   ├── GameViewModel.swift  # game state, timer, errors, hints, auto-play loop
+│   ├── SudokuApp.swift      # @main entry point + Sparkle updater
+│   ├── UpdaterCommands.swift   # "Check for Updates…" menu item (Sparkle bridge)
+│   ├── GameViewModel.swift  # game state, timer, undo/redo, persistence, stats, auto-play
 │   ├── Engine/
 │   │   └── SudokuEngine.swift  # pure logic: bitmask solver, uniqueness, generator
 │   └── Views/
 │       ├── ContentView.swift   # window layout, keyboard handling, victory overlay
 │       ├── BoardView.swift     # 9×9 grid + cell rendering
-│       └── SidePanel.swift     # difficulty, number pad, tools, auto-play controls
+│       └── SidePanel.swift     # difficulty, number pad, tools, auto-play, statistics
 ├── Tests/
-│   └── EngineTests.swift    # engine + view-model unit tests
-├── Resources/               # app icon (.icns + source PNG)
+│   ├── EngineTests.swift    # engine unit tests
+│   └── GameViewModelTests.swift  # undo/redo, save/restore, statistics
+├── Resources/               # app icon + fr/en localizations
 ├── Scripts/
 │   ├── generate-icon.swift  # renders the app icon programmatically (CoreGraphics)
-│   └── release.sh           # build → sign → DMG → notarize → staple
-└── docs/                    # documentation + GitHub Pages landing page
+│   └── release.sh           # build → sign → DMG → notarize → staple → appcast
+└── docs/                    # documentation + GitHub Pages landing page + Sparkle appcast
 ```
 
 ## Roadmap
 
-- [ ] Save/restore game in progress
-- [ ] Statistics (best times per difficulty)
-- [ ] Undo/redo
+- [x] Save/restore game in progress
+- [x] Statistics (best times per difficulty)
+- [x] Undo/redo
+- [x] English localization
+- [x] In-app updates (Sparkle)
 - [x] App icon
 - [x] Signed & notarized DMG release
 

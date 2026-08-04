@@ -1,10 +1,25 @@
 import SwiftUI
 import Combine
 
-struct CellState {
+struct CellState: Codable, Equatable {
     var value: Int = 0
     var isGiven: Bool = false
     var notes: Set<Int> = []
+}
+
+/// Snapshot of a game in progress, persisted so the player can quit and resume.
+struct SavedGame: Codable {
+    var cells: [CellState]
+    var solution: [Int]
+    var difficulty: String
+    var elapsed: TimeInterval
+    var errorCount: Int
+    var usedAutoPlay: Bool
+}
+
+struct LevelStats: Codable, Equatable {
+    var gamesWon = 0
+    var bestTime: TimeInterval?
 }
 
 @MainActor
@@ -16,15 +31,36 @@ final class GameViewModel: ObservableObject {
     @Published var elapsed: TimeInterval = 0
     @Published var errorCount = 0
     @Published var isWon = false
+    @Published var isNewRecord = false
     @Published var isAutoPlaying = false
     @Published var autoSpeed: Double = 0.25
+    @Published private(set) var stats: [String: LevelStats] = [:]
+    @Published private(set) var undoStack: [[CellState]] = []
+    @Published private(set) var redoStack: [[CellState]] = []
 
     private(set) var solution: [Int] = Array(repeating: 0, count: 81)
     private var clock: AnyCancellable?
     private var autoTask: Task<Void, Never>?
+    private var usedAutoPlay = false
+    private let defaults: UserDefaults
 
-    init() {
-        newGame(difficulty: .easy)
+    private static let gameKey = "savedGame"
+    private static let statsKey = "levelStats"
+
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+        if let data = defaults.data(forKey: Self.statsKey),
+           let decoded = try? JSONDecoder().decode([String: LevelStats].self, from: data) {
+            stats = decoded
+        }
+        if let data = defaults.data(forKey: Self.gameKey),
+           let saved = try? JSONDecoder().decode(SavedGame.self, from: data),
+           saved.cells.count == 81, saved.solution.count == 81,
+           let level = Difficulty(rawValue: saved.difficulty) {
+            restore(saved, level: level)
+        } else {
+            newGame(difficulty: .easy)
+        }
     }
 
     // MARK: - Game lifecycle
@@ -39,11 +75,31 @@ final class GameViewModel: ObservableObject {
         errorCount = 0
         elapsed = 0
         isWon = false
+        isNewRecord = false
         notesMode = false
+        usedAutoPlay = false
+        undoStack = []
+        redoStack = []
+        persist()
+        startClock()
+    }
+
+    private func restore(_ saved: SavedGame, level: Difficulty) {
+        difficulty = level
+        cells = saved.cells
+        solution = saved.solution
+        elapsed = saved.elapsed
+        errorCount = saved.errorCount
+        usedAutoPlay = saved.usedAutoPlay
+        startClock()
+    }
+
+    private func startClock() {
         clock = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
             .sink { [weak self] _ in
                 guard let self, !self.isWon else { return }
                 self.elapsed += 1
+                self.persist()
             }
     }
 
@@ -77,16 +133,18 @@ final class GameViewModel: ObservableObject {
     func enter(_ digit: Int) {
         guard !isAutoPlaying, !isWon, let i = selected, !cells[i].isGiven else { return }
         if notesMode {
-            if cells[i].value == 0 {
-                if cells[i].notes.contains(digit) {
-                    cells[i].notes.remove(digit)
-                } else {
-                    cells[i].notes.insert(digit)
-                }
+            guard cells[i].value == 0 else { return }
+            snapshot()
+            if cells[i].notes.contains(digit) {
+                cells[i].notes.remove(digit)
+            } else {
+                cells[i].notes.insert(digit)
             }
+            persist()
             return
         }
         guard cells[i].value != digit else { return }
+        snapshot()
         cells[i].value = digit
         cells[i].notes = []
         if digit != solution[i] {
@@ -95,12 +153,16 @@ final class GameViewModel: ObservableObject {
             clearNotes(around: i, digit: digit)
         }
         checkWin()
+        persist()
     }
 
     func erase() {
         guard !isAutoPlaying, !isWon, let i = selected, !cells[i].isGiven else { return }
+        guard cells[i].value != 0 || !cells[i].notes.isEmpty else { return }
+        snapshot()
         cells[i].value = 0
         cells[i].notes = []
+        persist()
     }
 
     func moveSelection(dRow: Int, dCol: Int) {
@@ -116,11 +178,39 @@ final class GameViewModel: ObservableObject {
         let target = selected.flatMap { cells[$0].isGiven || cells[$0].value == solution[$0] ? nil : $0 }
             ?? (0..<81).filter { cells[$0].value != solution[$0] }.randomElement()
         guard let i = target else { return }
+        snapshot()
         selected = i
         cells[i].value = solution[i]
         cells[i].notes = []
         clearNotes(around: i, digit: solution[i])
         checkWin()
+        persist()
+    }
+
+    // MARK: - Undo / Redo
+
+    var canUndo: Bool { !undoStack.isEmpty && !isAutoPlaying && !isWon }
+    var canRedo: Bool { !redoStack.isEmpty && !isAutoPlaying && !isWon }
+
+    func undo() {
+        guard canUndo, let previous = undoStack.popLast() else { return }
+        redoStack.append(cells)
+        cells = previous
+        persist()
+    }
+
+    func redo() {
+        guard canRedo, let next = redoStack.popLast() else { return }
+        undoStack.append(cells)
+        cells = next
+        persist()
+    }
+
+    /// Pushed before every board mutation. A new move invalidates the redo branch.
+    private func snapshot() {
+        undoStack.append(cells)
+        redoStack = []
+        if undoStack.count > 200 { undoStack.removeFirst() }
     }
 
     // MARK: - Auto-play (the app solves the board itself)
@@ -132,6 +222,7 @@ final class GameViewModel: ObservableObject {
     private func startAutoPlay() {
         guard !isWon else { return }
         isAutoPlaying = true
+        usedAutoPlay = true
         autoTask = Task { [weak self] in
             while let self, !Task.isCancelled {
                 guard let i = self.nextAutoMove() else { break }
@@ -143,6 +234,7 @@ final class GameViewModel: ObservableObject {
                     self.cells[i].notes = []
                 }
                 self.checkWin()
+                self.persist()
             }
             self?.isAutoPlaying = false
         }
@@ -168,6 +260,42 @@ final class GameViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Persistence & statistics
+
+    /// Saved on every mutation and every clock tick; cleared once the game is won.
+    private func persist() {
+        guard !isWon else {
+            defaults.removeObject(forKey: Self.gameKey)
+            return
+        }
+        let saved = SavedGame(
+            cells: cells,
+            solution: solution,
+            difficulty: difficulty.rawValue,
+            elapsed: elapsed,
+            errorCount: errorCount,
+            usedAutoPlay: usedAutoPlay
+        )
+        if let data = try? JSONEncoder().encode(saved) {
+            defaults.set(data, forKey: Self.gameKey)
+        }
+    }
+
+    /// Games solved by auto-play don't count towards the player's statistics.
+    private func recordWin() {
+        guard !usedAutoPlay else { return }
+        var level = stats[difficulty.rawValue] ?? LevelStats()
+        level.gamesWon += 1
+        if level.bestTime.map({ elapsed < $0 }) ?? true {
+            level.bestTime = elapsed
+            isNewRecord = true
+        }
+        stats[difficulty.rawValue] = level
+        if let data = try? JSONEncoder().encode(stats) {
+            defaults.set(data, forKey: Self.statsKey)
+        }
+    }
+
     // MARK: - Helpers
 
     private func clearNotes(around index: Int, digit: Int) {
@@ -184,10 +312,14 @@ final class GameViewModel: ObservableObject {
         guard grid == solution else { return }
         isWon = true
         stopAutoPlay()
+        defaults.removeObject(forKey: Self.gameKey)
+        recordWin()
     }
 
-    var formattedTime: String {
-        let s = Int(elapsed)
+    nonisolated static func timeString(_ t: TimeInterval) -> String {
+        let s = Int(t)
         return String(format: "%02d:%02d", s / 60, s % 60)
     }
+
+    var formattedTime: String { Self.timeString(elapsed) }
 }
