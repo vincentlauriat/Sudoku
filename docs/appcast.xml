@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>Sudoku</title>
+    <link>https://vincentlauriat.github.io/Sudoku/appcast.xml</link>
+    <description>Sudoku release feed</description>
+    <language>en</language>
+    <item>
+      <title>v1.1.0</title>
+      <pubDate>Tue, 04 Aug 2026 11:41:27 +0200</pubDate>
+      <sparkle:version>2</sparkle:version>
+      <sparkle:shortVersionString>1.1.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <sparkle:releaseNotesLink>https://github.com/vincentlauriat/Sudoku/releases/tag/v1.1.0</sparkle:releaseNotesLink>
+      <enclosure
+        url="https://github.com/vincentlauriat/Sudoku/releases/download/v1.1.0/Sudoku-1.1.0.dmg"
+        type="application/octet-stream"
+        sparkle:edSignature="BlVqQ3g6vS65pWB41oAmtzKJQntqG5yMQUVHTzwRGDtpG/g25EYlmM1su+GR5/g/+pnMjT+Ob5WiW0spzGeWCA==" length="4975447" />
+    </item>
+  </channel>
+</rss>
