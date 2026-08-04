@@ -40,11 +40,16 @@ struct ContentView: View {
         VStack(spacing: 12) {
             Text("🎉")
                 .font(.system(size: 48))
-            Text("Bravo !")
+            Text("victory.title")
                 .font(.title.bold())
-            Text("Grille \(game.difficulty.label.lowercased()) résolue en \(game.formattedTime)")
+            Text(String(format: String(localized: "victory.subtitle"), game.difficulty.label, game.formattedTime))
                 .foregroundStyle(.secondary)
-            Button("Nouvelle partie") {
+            if game.isNewRecord {
+                Text("victory.record")
+                    .font(.headline)
+                    .foregroundStyle(.orange)
+            }
+            Button("victory.new-game") {
                 game.newGame(difficulty: game.difficulty)
                 boardFocused = true
             }

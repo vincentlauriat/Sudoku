@@ -1,0 +1,32 @@
+/* Difficulty levels */
+"difficulty.easy" = "Easy";
+"difficulty.medium" = "Medium";
+"difficulty.hard" = "Hard";
+"difficulty.expert" = "Expert";
+
+/* Side panel */
+"new-game.title" = "New game";
+"pad.erase" = "Erase";
+"tools.notes" = "Notes (N)";
+"tools.hint" = "Hint";
+"tools.undo" = "Undo";
+"tools.redo" = "Redo";
+"auto.title" = "Auto mode";
+"auto.solve" = "Solve by itself";
+"auto.pause" = "Pause";
+"auto.speed" = "Speed: %.2f s/move";
+
+/* Statistics */
+"stats.title" = "Statistics";
+"stats.best" = "Best time: %@";
+"stats.none" = "Best time: —";
+"stats.won" = "Games won: %d";
+
+/* Victory overlay */
+"victory.title" = "Well done!";
+"victory.subtitle" = "Level %1$@ — solved in %2$@";
+"victory.record" = "🏆 New record!";
+"victory.new-game" = "New game";
+
+/* App menu */
+"menu.check-updates" = "Check for Updates…";

@@ -4,8 +4,9 @@
 
 ## Vue d'ensemble
 
-Application macOS native en SwiftUI pur, zéro dépendance externe, organisée en trois couches
-strictes. Le projet Xcode est généré depuis `project.yml` par
+Application macOS native en SwiftUI pur, organisée en trois couches strictes, avec une seule
+dépendance externe : [Sparkle 2](https://sparkle-project.org) pour les mises à jour intégrées
+(ajoutée via SPM dans `project.yml`). Le projet Xcode est généré depuis `project.yml` par
 [xcodegen](https://github.com/yonaskolb/XcodeGen) — le `.xcodeproj` est jetable et ignoré par git.
 
 ```mermaid
@@ -16,7 +17,7 @@ flowchart TB
         SP[SidePanel<br/>niveaux · pavé · mode auto]
     end
     subgraph ViewModel ["État (@MainActor)"]
-        VM[GameViewModel<br/>cases · chrono · erreurs · notes<br/>indices · Task du mode auto]
+        VM[GameViewModel<br/>cases · chrono · erreurs · notes<br/>indices · Task du mode auto<br/>undo/redo · persistance · stats]
     end
     subgraph Engine ["Moteur (Swift pur, sans UI)"]
         E[SudokuEngine<br/>solveur bitmask · countSolutions<br/>générateur · candidates]
@@ -55,13 +56,42 @@ Un unique `ObservableObject` `@MainActor` portant tout l'état de la partie :
 - Politique d'erreur : une saisie différente de la solution stockée incrémente
   immédiatement `errorCount` (le chiffre s'affiche en rouge)
 - Mode auto : une `Task` annulable — détaillée dans [docs/AUTOPLAY.md](docs/AUTOPLAY.md)
+- Undo/redo : piles de snapshots de `cells` (plafond 200), empilés avant chaque mutation ;
+  un nouveau coup invalide la branche redo ; `errorCount` n'est jamais décrémenté par un undo
+- Persistance : la partie en cours (`SavedGame`, Codable) est écrite dans `UserDefaults` à
+  chaque coup et chaque tick du chrono, restaurée dans `init`, purgée à la victoire
+- Statistiques : `LevelStats` (parties gagnées, meilleur temps) par niveau, aussi dans
+  `UserDefaults` ; les parties terminées par le mode auto sont exclues
 
 ### 3. Vues — `Sources/Views/`
 
 Rendu pur au-dessus du view model. `ContentView` gère le clavier (`.onKeyPress` : chiffres,
 flèches, Suppr, `N`) et l'overlay de victoire ; `BoardView` dessine la grille avec les
 surlignages pairs/même valeur/conflits ; `SidePanel` porte les niveaux, le pavé numérique, les
-notes, l'indice et les contrôles du mode auto.
+notes, l'indice, undo/redo (⌘Z / ⇧⌘Z), les contrôles du mode auto et les statistiques du
+niveau courant. `UpdaterCommands.swift` fait le pont entre le `canCheckForUpdates` de Sparkle
+et un item de menu SwiftUI.
+
+## Localisation
+
+L'UI est localisée en français (langue de développement) et en anglais via
+`Resources/fr.lproj` et `en.lproj/Localizable.strings`, avec des clés sémantiques
+(`difficulty.easy`, `tools.undo`, `victory.record`, …). Les `Text`/`Label`/`Button` SwiftUI
+résolvent les clés implicitement via `LocalizedStringKey` ; les chaînes formatées passent par
+`String(localized:)` + `String(format:)`. La documentation du repo reste en anglais.
+
+## Mises à jour intégrées (Sparkle)
+
+- `SPUStandardUpdaterController` démarré au lancement ; « Rechercher les mises à jour… »
+  dans le menu de l'app (`CommandGroup(after: .appInfo)`).
+- Feed : `SUFeedURL` → https://vincentlauriat.github.io/Sudoku/appcast.xml —
+  `docs/appcast.xml`, servi par le site GitHub Pages existant et régénéré par
+  `Scripts/release.sh` à chaque release.
+- Les mises à jour sont signées EdDSA (`sign_update`) avec la clé privée du trousseau de
+  connexion, compte **« Sudoku »** — ne jamais la régénérer ; la moitié publique est
+  `SUPublicEDKey` dans `project.yml`.
+- Sparkle compare `sparkle:version` au `CFBundleVersion` (`CURRENT_PROJECT_VERSION`), qui
+  doit donc augmenter à chaque release.
 
 ## Décisions clés
 
@@ -76,7 +106,7 @@ notes, l'indice et les contrôles du mode auto.
 
 ## Tests
 
-`Tests/EngineTests.swift` (XCTest, hébergé dans l'app) :
+XCTest, hébergé dans l'app — 11 tests. `Tests/EngineTests.swift` :
 
 - résout un puzzle de référence connu vers sa solution documentée
 - rejette les grilles contradictoires
@@ -85,11 +115,19 @@ notes, l'indice et les contrôles du mode auto.
 - le calcul de candidats respecte ligne/colonne/bloc
 - comportement du view model : victoire sans erreur, comptage d'erreurs
 
+`Tests/GameViewModelTests.swift` (suite `UserDefaults` isolée par test) :
+
+- aller-retour undo/redo, branche redo invalidée par un nouveau coup
+- sauvegarde/restauration entre instances du view model
+- la victoire enregistre les statistiques et purge la sauvegarde
+
 ## Build & release
 
 - Debug : `xcodegen generate && xcodebuild -scheme Sudoku build`
 - Release : `Scripts/release.sh` — build Release (non signé), `ditto` vers un staging propre,
-  codesign Developer ID avec Hardened Runtime + timestamp, DMG dans `release/`, soumission
-  `notarytool` + staple, vérification indépendante `spctl`/`stapler`.
+  binaires imbriqués de Sparkle.framework signés du plus profond au plus englobant, codesign
+  Developer ID avec Hardened Runtime + timestamp, DMG dans `release/`, soumission
+  `notarytool` + staple, `sign_update` EdDSA + génération de `docs/appcast.xml`,
+  vérification indépendante `spctl`/`stapler`.
 - Icône : rendue programmatiquement par `Scripts/generate-icon.swift` (AppKit/CoreGraphics)
   → `Resources/AppIcon.icns`.

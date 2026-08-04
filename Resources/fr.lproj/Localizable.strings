@@ -1,0 +1,32 @@
+/* Difficulty levels */
+"difficulty.easy" = "Facile";
+"difficulty.medium" = "Moyen";
+"difficulty.hard" = "Difficile";
+"difficulty.expert" = "Expert";
+
+/* Side panel */
+"new-game.title" = "Nouvelle partie";
+"pad.erase" = "Effacer";
+"tools.notes" = "Notes (N)";
+"tools.hint" = "Indice";
+"tools.undo" = "Annuler";
+"tools.redo" = "Rétablir";
+"auto.title" = "Mode Auto";
+"auto.solve" = "Résoudre tout seul";
+"auto.pause" = "Pause";
+"auto.speed" = "Vitesse : %.2f s/coup";
+
+/* Statistics */
+"stats.title" = "Statistiques";
+"stats.best" = "Record : %@";
+"stats.none" = "Record : —";
+"stats.won" = "Gagnées : %d";
+
+/* Victory overlay */
+"victory.title" = "Bravo !";
+"victory.subtitle" = "Niveau %1$@ — résolu en %2$@";
+"victory.record" = "🏆 Nouveau record !";
+"victory.new-game" = "Nouvelle partie";
+
+/* App menu */
+"menu.check-updates" = "Rechercher les mises à jour…";
