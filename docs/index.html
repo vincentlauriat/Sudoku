@@ -1,126 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="--accent:#4d7cfe;--on-accent:#141414;--accent-ink:#1f5afe">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sudoku for macOS — a native SwiftUI game that can play itself</title>
-<meta name="description" content="A native macOS Sudoku game written in pure SwiftUI. Four difficulty levels, guaranteed-unique puzzles, and an auto-play mode that solves the board by itself. Free, open source, signed & notarized.">
-<link rel="icon" type="image/png" href="assets/icon.png">
-<style>
-  :root {
-    --bg: #0b1020;
-    --bg-card: #141b31;
-    --text: #e8ecf6;
-    --muted: #9aa5bf;
-    --accent: #4d7cfe;
-    --green: #2ec770;
-    --border: #232d4d;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
-    line-height: 1.6;
-  }
-  .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
-  header { text-align: center; padding: 72px 0 40px; }
-  header img.icon { width: 128px; height: 128px; border-radius: 28px; box-shadow: 0 12px 40px rgba(77,124,254,.35); }
-  h1 { font-size: 2.6rem; margin: 24px 0 8px; letter-spacing: -.02em; }
-  .tagline { font-size: 1.25rem; color: var(--muted); max-width: 620px; margin: 0 auto; }
-  .buttons { margin: 32px 0 8px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-  .btn {
-    display: inline-block; padding: 13px 26px; border-radius: 12px;
-    font-weight: 600; text-decoration: none; font-size: 1.02rem;
-    transition: transform .12s ease, box-shadow .12s ease;
-  }
-  .btn:hover { transform: translateY(-2px); }
-  .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 6px 24px rgba(77,124,254,.4); }
-  .btn-secondary { background: var(--bg-card); color: var(--text); border: 1px solid var(--border); }
-  .fineprint { color: var(--muted); font-size: .88rem; }
-  .shot { display: block; max-width: 100%; border-radius: 14px; border: 1px solid var(--border); margin: 48px auto 0; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
-  section { padding: 56px 0 8px; }
-  h2 { font-size: 1.7rem; margin-bottom: 20px; letter-spacing: -.01em; }
-  h2 .em { color: var(--green); }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-  .card {
-    background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: 14px; padding: 20px 22px;
-  }
-  .card h3 { font-size: 1.05rem; margin-bottom: 6px; }
-  .card p { color: var(--muted); font-size: .95rem; }
-  .steps { counter-reset: step; }
-  .step { display: flex; gap: 16px; margin-bottom: 22px; }
-  .step .n {
-    counter-increment: step; flex: 0 0 36px; height: 36px; border-radius: 50%;
-    background: var(--accent); color: #fff; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .step .n::before { content: counter(step); }
-  .step p { color: var(--muted); }
-  .step strong { color: var(--text); }
-  code, pre {
-    font-family: "SF Mono", ui-monospace, Menlo, monospace;
-    background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
-  }
-  code { padding: 2px 7px; font-size: .9em; }
-  pre { padding: 18px 20px; overflow-x: auto; margin: 16px 0; }
-  pre code { background: none; border: none; padding: 0; }
-  a { color: var(--accent); }
-  footer { text-align: center; padding: 64px 0 40px; color: var(--muted); font-size: .9rem; }
-  footer a { color: var(--muted); }
-</style>
+<meta name="description" content="A native macOS Sudoku game written in pure SwiftUI. Four difficulty levels, guaranteed-unique puzzles, and an auto-play mode that solves the board by itself. Free, open source, signed &amp; notarized.">
+<meta name="theme-color" content="#eff1f2">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Sudoku for macOS — a native SwiftUI game that can play itself">
+<meta property="og:description" content="A native macOS Sudoku game written in pure SwiftUI. Four difficulty levels, guaranteed-unique puzzles, and an auto-play mode that solves the board by itself. Free, open source, signed &amp; notarized.">
+<meta property="og:url" content="https://vincentlauriat.github.io/Sudoku/">
+
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/icon.png">
+<link rel="preload" href="/assets/schibsted.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/monograph/v1/monograph.css">
+
 </head>
 <body>
-
-<header class="wrap">
-  <img class="icon" src="assets/icon.png" alt="Sudoku app icon">
-  <h1>Sudoku for macOS</h1>
-  <p class="tagline">A native SwiftUI Sudoku with four difficulty levels — and a mode where the app
-  <strong style="color:var(--green)">plays all by itself</strong>, cell by cell, like a human would.</p>
-  <div class="buttons">
-    <a class="btn btn-primary" href="https://github.com/vincentlauriat/Sudoku/releases/latest">⬇︎&nbsp; Download for macOS</a>
-    <a class="btn btn-secondary" href="https://github.com/vincentlauriat/Sudoku">View on GitHub</a>
-  </div>
-  <p class="fineprint">Free &amp; open source (MIT) · macOS 14+ · signed &amp; notarized DMG · no dependencies</p>
-  <img class="shot" src="assets/screenshot.png" alt="Sudoku running on macOS: the board mid auto-solve, side panel with difficulty levels and speed slider">
-</header>
-
-<section class="wrap">
-  <h2>Features</h2>
-  <div class="grid">
-    <div class="card"><h3>🎚️ Four difficulty levels</h3><p>Easy, Medium, Hard, Expert — from 40 down to 24 clues. Every puzzle is generated fresh and verified to have exactly one solution.</p></div>
-    <div class="card"><h3>🤖 Auto-play mode</h3><p>Press play and watch the app solve the board itself at up to 20 moves per second, correcting your mistakes along the way. Pause and resume anytime.</p></div>
-    <div class="card"><h3>⌨️ Keyboard first</h3><p>Digits 1–9, arrow keys, Delete, N for pencil marks. Or play entirely with the mouse and the number pad.</p></div>
-    <div class="card"><h3>🔍 Smart highlighting</h3><p>Row, column and box peers, same-value cells, and conflicts in red — the scanning aids you expect from a modern Sudoku.</p></div>
-    <div class="card"><h3>✏️ Pencil marks</h3><p>Toggleable notes mode; notes are automatically cleaned up as the surrounding cells get solved.</p></div>
-    <div class="card"><h3>💡 Hints, timer &amp; errors</h3><p>A hint button that fills the selected cell, a timer, and an error counter that flags wrong digits in red instantly.</p></div>
-  </div>
-</section>
-
-<section class="wrap">
-  <h2>How it plays <span class="em">by itself</span></h2>
-  <div class="steps">
-    <div class="step"><span class="n"></span><p><strong>The solution is known before you play.</strong> The generator builds a complete valid grid with randomized backtracking, then digs holes one by one — keeping each hole only if a counting solver proves the puzzle still has exactly one solution.</p></div>
-    <div class="step"><span class="n"></span><p><strong>Moves are chosen like a human would.</strong> Auto-play repeatedly picks the empty cell with the fewest remaining candidates (the MRV heuristic — “find the cell where only one digit fits”), producing an organic cascade instead of a mechanical left-to-right sweep. Your wrong entries get corrected first.</p></div>
-    <div class="step"><span class="n"></span><p><strong>Everything is a cancellable Swift Task.</strong> The loop highlights the cell, waits, plays the digit with a small animation, and re-reads the speed slider on every move — so pause, resume and live speed changes just work.</p></div>
-  </div>
-  <p>Full technical write-up: <a href="https://github.com/vincentlauriat/Sudoku/blob/main/docs/AUTOPLAY.md">docs/AUTOPLAY.md</a> — bitmask solver, uniqueness guarantee, move ordering and the animation loop.</p>
-</section>
-
-<section class="wrap">
-  <h2>Build from source</h2>
-  <pre><code>brew install xcodegen
+<a class="skip" href="#content"><span class="en">Skip to content</span><span class="fr">Aller au contenu</span><span class="zh">跳至內容</span></a>
+<header class="running"><div class="wrap">
+<a class="back" href="https://vincentlauriat.github.io/#w34"><svg class="arw l" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg><span class="en">Vincent Lauriat</span><span class="fr">Vincent Lauriat</span><span class="zh">Vincent Lauriat</span></a>
+<span class="here"><span class="num">34</span> · Sudoku</span>
+<div class="langs" role="group" aria-label="Language / Langue / 語言"><button type="button" data-lang="en" aria-pressed="false">EN</button><button type="button" data-lang="fr" aria-pressed="false">FR</button><button type="button" data-lang="zh" aria-pressed="false">中文</button></div>
+<a class="gh" href="https://github.com/vincentlauriat/Sudoku">GitHub</a>
+</div></header>
+<main>
+<section class="title"><div class="wrap g12">
+<h1 class="nm" style="--len:6"><span class="no" aria-label="Work no. 34">34</span><span>Sudoku</span></h1>
+<p class="role"><span class="en">Native SwiftUI Sudoku for macOS</span><span class="fr">Sudoku natif SwiftUI pour macOS</span><span class="zh">原生 SwiftUI macOS 數獨</span></p>
+<div class="t-left">
+<p class="thesis"><span class="en">A Sudoku that plays all by itself, cell by cell, like a human would.</span><span class="fr">Un Sudoku qui joue tout seul, case par case, comme le ferait un humain.</span><span class="zh">一款會自己下棋的數獨，一格一格地解，就像真人一樣。</span></p>
+<p class='lede'><span class="en">A native SwiftUI Sudoku with four difficulty levels — and a mode where the app <b>plays all by itself</b>.</span><span class="fr">Un Sudoku natif SwiftUI avec quatre niveaux de difficulté — et un mode où l'app <b>joue toute seule</b>.</span><span class="zh">原生 SwiftUI 數獨，提供四種難度——還有一個讓 App <b>完全自己玩</b>的模式。</span></p>
+<div class="acts"><a class="btn" href="https://github.com/vincentlauriat/Sudoku/releases/latest"><span class="en">Download for macOS</span><span class="fr">Télécharger pour macOS</span><span class="zh">下載 macOS 版</span></a><a class="lnk" href="https://github.com/vincentlauriat/Sudoku"><span class="en">View on GitHub</span><span class="fr">Voir sur GitHub</span><span class="zh">在 GitHub 上檢視</span><svg class="arw" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg></a></div>
+<dl class="facts"><div><dt><span class="en">Requires</span><span class="fr">Configuration</span><span class="zh">系統需求</span></dt><dd>macOS 14+</dd></div><div><dt><span class="en">Distribution</span><span class="fr">Distribution</span><span class="zh">發行</span></dt><dd><span class="en">Signed &amp; notarized DMG</span><span class="fr">DMG signé et notarié</span><span class="zh">已簽章與公證的 DMG</span></dd></div><div><dt><span class="en">Dependencies</span><span class="fr">Dépendances</span><span class="zh">相依套件</span></dt><dd><span class="en">None</span><span class="fr">Aucune</span><span class="zh">無</span></dd></div><div><dt><span class="en">Licence</span><span class="fr">Licence</span><span class="zh">授權</span></dt><dd><span class="en">Free &amp; open source (MIT)</span><span class="fr">Gratuit et open source (MIT)</span><span class="zh">免費開源（MIT）</span></dd></div></dl>
+</div>
+<div class="t-right"><figure class="plate"><div class="pl"><img src="assets/screenshot.png" alt="Sudoku running on macOS: the board mid auto-solve, side panel with difficulty levels and speed slider" width="1800" height="1208" decoding="async"></div><figcaption><span class="fg"><span class="en">Fig.</span><span class="fr">Fig.</span><span class="zh">圖</span> 1</span><span class="en">The board mid auto-solve, with the difficulty levels and the speed slider.</span><span class="fr">La grille en pleine résolution automatique, avec les niveaux de difficulté et le curseur de vitesse.</span><span class="zh">自動解題進行中的盤面，旁邊是難度選擇與速度滑桿。</span></figcaption></figure></div>
+</div></section>
+<section class="opener" id="content"><div class="wrap"><div class="op-grid"><div class="numeral" aria-hidden="true">34</div><div class="op-text"><h2><span class="en">Features</span><span class="fr">Fonctionnalités</span><span class="zh">功能</span></h2><p><span class="en">Everything you expect from a modern Sudoku, and one thing you don't.</span><span class="fr">Tout ce qu'on attend d'un Sudoku moderne, et une chose qu'on n'attend pas.</span><span class="zh">現代數獨該有的一切，再加上一個你意想不到的功能。</span></p></div></div></div></section>
+<section class="chapter"><div class="wrap"><ul class="specs"><li><h3><span class="en">Four difficulty levels</span><span class="fr">Quatre niveaux de difficulté</span><span class="zh">四種難度</span></h3><div><p><span class="en">Easy, Medium, Hard, Expert — from 40 down to 24 clues. Every puzzle is generated fresh and verified to have exactly one solution.</span><span class="fr">Facile, Moyen, Difficile, Expert — de 40 à 24 indices. Chaque grille est générée à neuf et vérifiée pour n'avoir qu'une seule solution.</span><span class="zh">簡單、中等、困難、專家——提示從 40 個減到 24 個。每道題目都是全新生成，並經驗證只有唯一解。</span></p></div></li><li><h3><span class="en">Auto-play mode</span><span class="fr">Mode lecture automatique</span><span class="zh">自動遊玩模式</span></h3><div><p><span class="en">Press play and watch the app solve the board itself at up to 20 moves per second, correcting your mistakes along the way. Pause and resume anytime.</span><span class="fr">Appuyez sur lecture et regardez l'app résoudre la grille elle-même, jusqu'à 20 coups par seconde, en corrigeant vos erreurs au passage. Pause et reprise à tout moment.</span><span class="zh">按下播放，看 App 以每秒最多 20 步的速度自己解開盤面，順便修正你的錯誤。隨時可以暫停與繼續。</span></p></div></li><li><h3><span class="en">Keyboard first</span><span class="fr">Le clavier d'abord</span><span class="zh">鍵盤優先</span></h3><div><p><span class="en">Digits 1–9, arrow keys, Delete, N for pencil marks. Or play entirely with the mouse and the number pad.</span><span class="fr">Chiffres 1–9, flèches, Suppr, N pour les annotations. Ou jouez entièrement à la souris avec le pavé numérique.</span><span class="zh">數字 1–9、方向鍵、Delete，按 N 切換筆記。也可以完全用滑鼠與數字面板來玩。</span></p></div></li><li><h3><span class="en">Smart highlighting</span><span class="fr">Surlignage intelligent</span><span class="zh">智慧標示</span></h3><div><p><span class="en">Row, column and box peers, same-value cells, and conflicts in red — the scanning aids you expect from a modern Sudoku.</span><span class="fr">Ligne, colonne et bloc associés, cases de même valeur, conflits en rouge — les aides au repérage qu'on attend d'un Sudoku moderne.</span><span class="zh">同列、同行、同宮的格子、相同數字的格子，以及以紅色標示的衝突——現代數獨該有的掃視輔助。</span></p></div></li><li><h3><span class="en">Pencil marks</span><span class="fr">Annotations</span><span class="zh">筆記</span></h3><div><p><span class="en">Toggleable notes mode; notes are automatically cleaned up as the surrounding cells get solved.</span><span class="fr">Mode notes activable ; les notes sont nettoyées automatiquement à mesure que les cases voisines sont résolues.</span><span class="zh">可切換的筆記模式；周圍格子解開後，筆記會自動清除。</span></p></div></li><li><h3><span class="en">Hints, timer &amp; errors</span><span class="fr">Indices, chrono et erreurs</span><span class="zh">提示、計時與錯誤</span></h3><div><p><span class="en">A hint button that fills the selected cell, a timer, and an error counter that flags wrong digits in red instantly.</span><span class="fr">Un bouton d'indice qui remplit la case sélectionnée, un chronomètre et un compteur d'erreurs qui signale aussitôt les mauvais chiffres en rouge.</span><span class="zh">一個會填入所選格子的提示按鈕、一個計時器，以及會立即以紅色標出錯誤數字的錯誤計數。</span></p></div></li></ul></div></section>
+<section class="chapter" id="autoplay"><div class="wrap g12"><div class="ch-head"><h2><span class="en">How it plays by itself</span><span class="fr">Comment il joue tout seul</span><span class="zh">它如何自己玩</span></h2></div><div class="ch-body"><ol class="steps"><li><p><span class="en"><b>The solution is known before you play.</b> The generator builds a complete valid grid with randomized backtracking, then digs holes one by one — keeping each hole only if a counting solver proves the puzzle still has exactly one solution.</span><span class="fr"><b>La solution est connue avant de jouer.</b> Le générateur construit une grille complète et valide par backtracking aléatoire, puis creuse les cases une à une — chaque trou n'est gardé que si un solveur de comptage prouve que la grille a toujours une seule solution.</span><span class="zh"><b>開局前就已知道解答。</b>產生器以隨機回溯法建立一個完整有效的盤面，再逐格挖空——只有在計數解題器證明題目仍只有唯一解時，才保留那個空格。</span></p></li><li><p><span class="en"><b>Moves are chosen like a human would.</b> Auto-play repeatedly picks the empty cell with the fewest remaining candidates (the MRV heuristic — “find the cell where only one digit fits”), producing an organic cascade instead of a mechanical left-to-right sweep. Your wrong entries get corrected first.</span><span class="fr"><b>Les coups sont choisis comme le ferait un humain.</b> La lecture automatique choisit à chaque fois la case vide qui a le moins de candidats restants (l'heuristique MRV — « trouver la case où un seul chiffre convient »), ce qui produit une cascade organique plutôt qu'un balayage mécanique de gauche à droite. Vos erreurs sont corrigées en premier.</span><span class="zh"><b>每一步都像真人一樣選擇。</b>自動遊玩會反覆挑選剩餘候選數最少的空格（MRV 啟發法——「找出只能填一個數字的格子」），形成自然的連鎖，而不是機械式地由左至右掃過。你填錯的格子會最先被修正。</span></p></li><li><p><span class="en"><b>Everything is a cancellable Swift Task.</b> The loop highlights the cell, waits, plays the digit with a small animation, and re-reads the speed slider on every move — so pause, resume and live speed changes just work.</span><span class="fr"><b>Tout est une Task Swift annulable.</b> La boucle surligne la case, attend, joue le chiffre avec une petite animation et relit le curseur de vitesse à chaque coup — pause, reprise et changement de vitesse en direct fonctionnent donc naturellement.</span><span class="zh"><b>一切都是可取消的 Swift Task。</b>迴圈會標示格子、等待、以小動畫填入數字，並在每一步重新讀取速度滑桿——因此暫停、繼續與即時調速都能順利運作。</span></p></li></ol><p><span class="en">Full technical write-up: <a href="https://github.com/vincentlauriat/Sudoku/blob/main/docs/AUTOPLAY.md">docs/AUTOPLAY.md</a> — bitmask solver, uniqueness guarantee, move ordering and the animation loop.</span><span class="fr">Le détail technique complet : <a href="https://github.com/vincentlauriat/Sudoku/blob/main/docs/AUTOPLAY.md">docs/AUTOPLAY.md</a> — solveur à masques de bits, garantie d'unicité, ordre des coups et boucle d'animation.</span><span class="zh">完整技術說明：<a href="https://github.com/vincentlauriat/Sudoku/blob/main/docs/AUTOPLAY.md">docs/AUTOPLAY.md</a>——位元遮罩解題器、唯一解保證、出手順序與動畫迴圈。</span></p></div></div></section><section class="chapter" id="build"><div class="wrap g12"><div class="ch-head"><h2><span class="en">Build from source</span><span class="fr">Compiler depuis les sources</span><span class="zh">從原始碼建置</span></h2><p><span class="en">The repo is meant as an <b>example project</b>.</span><span class="fr">Le dépôt se veut un <b>projet d'exemple</b>.</span><span class="zh">這個儲存庫的定位是<b>範例專案</b>。</span></p></div><div class="ch-body"><pre><code>brew install xcodegen
 git clone https://github.com/vincentlauriat/Sudoku.git
 cd Sudoku
 xcodegen generate
-open Sudoku.xcodeproj   # then ⌘R</code></pre>
-  <p>The repo is meant as an <strong>example project</strong>: three strict layers (pure engine, <code>@MainActor</code> view model, SwiftUI views), unit tests, programmatic app icon, and a sign-notarize-staple release script. Start with the <a href="https://github.com/vincentlauriat/Sudoku/blob/main/ARCHITECTURE_EN.md">architecture guide</a>.</p>
-</section>
-
-<footer>
-  <p>MIT © Vincent Lauriat · <a href="https://github.com/vincentlauriat/Sudoku">github.com/vincentlauriat/Sudoku</a></p>
-</footer>
-
+open Sudoku.xcodeproj   # then ⌘R</code></pre><p><span class="en">Three strict layers (pure engine, <code>@MainActor</code> view model, SwiftUI views), unit tests, programmatic app icon, and a sign-notarize-staple release script. Start with the <a href="https://github.com/vincentlauriat/Sudoku/blob/main/ARCHITECTURE_EN.md">architecture guide</a>.</span><span class="fr">Trois couches strictes (moteur pur, view model <code>@MainActor</code>, vues SwiftUI), des tests unitaires, une icône générée par code et un script de release qui signe, notarie et agrafe. Commencez par le <a href="https://github.com/vincentlauriat/Sudoku/blob/main/ARCHITECTURE_EN.md">guide d'architecture</a>.</span><span class="zh">三個嚴格分層（純引擎、<code>@MainActor</code> view model、SwiftUI 視圖）、單元測試、以程式產生的 App 圖示，以及簽章、公證與裝訂一條龍的發行腳本。請從<a href="https://github.com/vincentlauriat/Sudoku/blob/main/ARCHITECTURE_EN.md">架構指南</a>開始。</span></p></div></div></section>
+<section class="close"><div class="wrap g12"><h2><span class="en">Play, or watch it play</span><span class="fr">Jouez, ou regardez-le jouer</span><span class="zh">自己玩，或看它玩</span></h2><div class="c-r"><p><span class="en">Free and open source, for macOS 14 and later.</span><span class="fr">Gratuit et open source, pour macOS 14 et ultérieur.</span><span class="zh">免費開源，適用 macOS 14 以上。</span></p><div class="acts"><a class="btn" href="https://github.com/vincentlauriat/Sudoku/releases/latest"><span class="en">Download for macOS</span><span class="fr">Télécharger pour macOS</span><span class="zh">下載 macOS 版</span></a><a class="lnk" href="https://github.com/vincentlauriat/Sudoku"><span class="en">View on GitHub</span><span class="fr">Voir sur GitHub</span><span class="zh">在 GitHub 上檢視</span><svg class="arw" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg></a></div></div></div></section>
+</main>
+<footer class="colophon"><div class="wrap g12"><div class="c1"><h2>Sudoku</h2><p><span class="en">Work no.</span><span class="fr">Réalisation n°</span><span class="zh">作品編號</span> <span class="num">34</span> <span class="en">in the works of Vincent Lauriat</span><span class="fr">dans les réalisations de Vincent Lauriat</span><span class="zh">收錄於 Vincent Lauriat 作品集</span>.</p><p><a href="https://vincentlauriat.github.io/#w34"><span class="en">All works</span><span class="fr">Toutes les réalisations</span><span class="zh">全部作品</span></a></p></div><div class="c2"><h2><span class="en">Source</span><span class="fr">Source</span><span class="zh">原始碼</span></h2><p><a href="https://github.com/vincentlauriat/Sudoku">github.com/vincentlauriat/Sudoku</a></p><p><span class="en">MIT License</span><span class="fr">Licence MIT</span><span class="zh">MIT 授權</span> · © 2026 Vincent Lauriat</p></div><div class="c3"><h2><span class="en">About this page</span><span class="fr">À propos de cette page</span><span class="zh">關於本頁</span></h2><p><span class="en">Set in Schibsted Grotesk, on the grid of the book it belongs to.</span><span class="fr">Composée en Schibsted Grotesk, sur la grille du livre auquel elle appartient.</span><span class="zh">以 Schibsted Grotesk 排版，沿用其所屬作品集的網格。</span></p></div></div></footer>
+<script src="/assets/monograph/v1/monograph.js"></script>
 </body>
 </html>
