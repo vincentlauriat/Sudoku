@@ -1,0 +1,287 @@
+{
+  "name": "Sudoku",
+  "no": "34",
+  "repo": "vincentlauriat/Sudoku",
+  "url": "https://vincentlauriat.github.io/Sudoku/",
+  "accent": "#4d7cfe",
+  "meta": {
+    "title": "Sudoku for macOS — a native SwiftUI game that can play itself",
+    "description": "A native macOS Sudoku game written in pure SwiftUI. Four difficulty levels, guaranteed-unique puzzles, and an auto-play mode that solves the board by itself. Free, open source, signed & notarized.",
+    "favicon": "assets/icon.png"
+  },
+  "role": {
+    "en": "Native SwiftUI Sudoku for macOS",
+    "fr": "Sudoku natif SwiftUI pour macOS",
+    "zh": "原生 SwiftUI macOS 數獨"
+  },
+  "thesis": {
+    "en": "A Sudoku that plays all by itself, cell by cell, like a human would.",
+    "fr": "Un Sudoku qui joue tout seul, case par case, comme le ferait un humain.",
+    "zh": "一款會自己下棋的數獨，一格一格地解，就像真人一樣。"
+  },
+  "lede": {
+    "en": "A native SwiftUI Sudoku with four difficulty levels — and a mode where the app <b>plays all by itself</b>.",
+    "fr": "Un Sudoku natif SwiftUI avec quatre niveaux de difficulté — et un mode où l'app <b>joue toute seule</b>.",
+    "zh": "原生 SwiftUI 數獨，提供四種難度——還有一個讓 App <b>完全自己玩</b>的模式。"
+  },
+  "actions": [
+    {
+      "primary": true,
+      "href": "https://github.com/vincentlauriat/Sudoku/releases/latest",
+      "label": {
+        "en": "Download for macOS",
+        "fr": "Télécharger pour macOS",
+        "zh": "下載 macOS 版"
+      }
+    },
+    {
+      "href": "https://github.com/vincentlauriat/Sudoku",
+      "label": {
+        "en": "View on GitHub",
+        "fr": "Voir sur GitHub",
+        "zh": "在 GitHub 上檢視"
+      }
+    }
+  ],
+  "facts": [
+    {
+      "k": {
+        "en": "Requires",
+        "fr": "Configuration",
+        "zh": "系統需求"
+      },
+      "v": "macOS 14+"
+    },
+    {
+      "k": {
+        "en": "Distribution",
+        "fr": "Distribution",
+        "zh": "發行"
+      },
+      "v": {
+        "en": "Signed &amp; notarized DMG",
+        "fr": "DMG signé et notarié",
+        "zh": "已簽章與公證的 DMG"
+      }
+    },
+    {
+      "k": {
+        "en": "Dependencies",
+        "fr": "Dépendances",
+        "zh": "相依套件"
+      },
+      "v": {
+        "en": "None",
+        "fr": "Aucune",
+        "zh": "無"
+      }
+    },
+    {
+      "k": {
+        "en": "Licence",
+        "fr": "Licence",
+        "zh": "授權"
+      },
+      "v": {
+        "en": "Free &amp; open source (MIT)",
+        "fr": "Gratuit et open source (MIT)",
+        "zh": "免費開源（MIT）"
+      }
+    }
+  ],
+  "hero": {
+    "src": "assets/screenshot.png",
+    "w": 1800,
+    "h": 1208,
+    "alt": "Sudoku running on macOS: the board mid auto-solve, side panel with difficulty levels and speed slider",
+    "caption": {
+      "en": "The board mid auto-solve, with the difficulty levels and the speed slider.",
+      "fr": "La grille en pleine résolution automatique, avec les niveaux de difficulté et le curseur de vitesse.",
+      "zh": "自動解題進行中的盤面，旁邊是難度選擇與速度滑桿。"
+    }
+  },
+  "opener": {
+    "h": {
+      "en": "Features",
+      "fr": "Fonctionnalités",
+      "zh": "功能"
+    },
+    "p": {
+      "en": "Everything you expect from a modern Sudoku, and one thing you don't.",
+      "fr": "Tout ce qu'on attend d'un Sudoku moderne, et une chose qu'on n'attend pas.",
+      "zh": "現代數獨該有的一切，再加上一個你意想不到的功能。"
+    }
+  },
+  "features": [
+    {
+      "h": {
+        "en": "Four difficulty levels",
+        "fr": "Quatre niveaux de difficulté",
+        "zh": "四種難度"
+      },
+      "p": {
+        "en": "Easy, Medium, Hard, Expert — from 40 down to 24 clues. Every puzzle is generated fresh and verified to have exactly one solution.",
+        "fr": "Facile, Moyen, Difficile, Expert — de 40 à 24 indices. Chaque grille est générée à neuf et vérifiée pour n'avoir qu'une seule solution.",
+        "zh": "簡單、中等、困難、專家——提示從 40 個減到 24 個。每道題目都是全新生成，並經驗證只有唯一解。"
+      }
+    },
+    {
+      "h": {
+        "en": "Auto-play mode",
+        "fr": "Mode lecture automatique",
+        "zh": "自動遊玩模式"
+      },
+      "p": {
+        "en": "Press play and watch the app solve the board itself at up to 20 moves per second, correcting your mistakes along the way. Pause and resume anytime.",
+        "fr": "Appuyez sur lecture et regardez l'app résoudre la grille elle-même, jusqu'à 20 coups par seconde, en corrigeant vos erreurs au passage. Pause et reprise à tout moment.",
+        "zh": "按下播放，看 App 以每秒最多 20 步的速度自己解開盤面，順便修正你的錯誤。隨時可以暫停與繼續。"
+      }
+    },
+    {
+      "h": {
+        "en": "Keyboard first",
+        "fr": "Le clavier d'abord",
+        "zh": "鍵盤優先"
+      },
+      "p": {
+        "en": "Digits 1–9, arrow keys, Delete, N for pencil marks. Or play entirely with the mouse and the number pad.",
+        "fr": "Chiffres 1–9, flèches, Suppr, N pour les annotations. Ou jouez entièrement à la souris avec le pavé numérique.",
+        "zh": "數字 1–9、方向鍵、Delete，按 N 切換筆記。也可以完全用滑鼠與數字面板來玩。"
+      }
+    },
+    {
+      "h": {
+        "en": "Smart highlighting",
+        "fr": "Surlignage intelligent",
+        "zh": "智慧標示"
+      },
+      "p": {
+        "en": "Row, column and box peers, same-value cells, and conflicts in red — the scanning aids you expect from a modern Sudoku.",
+        "fr": "Ligne, colonne et bloc associés, cases de même valeur, conflits en rouge — les aides au repérage qu'on attend d'un Sudoku moderne.",
+        "zh": "同列、同行、同宮的格子、相同數字的格子，以及以紅色標示的衝突——現代數獨該有的掃視輔助。"
+      }
+    },
+    {
+      "h": {
+        "en": "Pencil marks",
+        "fr": "Annotations",
+        "zh": "筆記"
+      },
+      "p": {
+        "en": "Toggleable notes mode; notes are automatically cleaned up as the surrounding cells get solved.",
+        "fr": "Mode notes activable ; les notes sont nettoyées automatiquement à mesure que les cases voisines sont résolues.",
+        "zh": "可切換的筆記模式；周圍格子解開後，筆記會自動清除。"
+      }
+    },
+    {
+      "h": {
+        "en": "Hints, timer &amp; errors",
+        "fr": "Indices, chrono et erreurs",
+        "zh": "提示、計時與錯誤"
+      },
+      "p": {
+        "en": "A hint button that fills the selected cell, a timer, and an error counter that flags wrong digits in red instantly.",
+        "fr": "Un bouton d'indice qui remplit la case sélectionnée, un chronomètre et un compteur d'erreurs qui signale aussitôt les mauvais chiffres en rouge.",
+        "zh": "一個會填入所選格子的提示按鈕、一個計時器，以及會立即以紅色標出錯誤數字的錯誤計數。"
+      }
+    }
+  ],
+  "chapters": [
+    {
+      "id": "autoplay",
+      "h": {
+        "en": "How it plays by itself",
+        "fr": "Comment il joue tout seul",
+        "zh": "它如何自己玩"
+      },
+      "blocks": [
+        {
+          "type": "steps",
+          "items": [
+            {
+              "en": "<b>The solution is known before you play.</b> The generator builds a complete valid grid with randomized backtracking, then digs holes one by one — keeping each hole only if a counting solver proves the puzzle still has exactly one solution.",
+              "fr": "<b>La solution est connue avant de jouer.</b> Le générateur construit une grille complète et valide par backtracking aléatoire, puis creuse les cases une à une — chaque trou n'est gardé que si un solveur de comptage prouve que la grille a toujours une seule solution.",
+              "zh": "<b>開局前就已知道解答。</b>產生器以隨機回溯法建立一個完整有效的盤面，再逐格挖空——只有在計數解題器證明題目仍只有唯一解時，才保留那個空格。"
+            },
+            {
+              "en": "<b>Moves are chosen like a human would.</b> Auto-play repeatedly picks the empty cell with the fewest remaining candidates (the MRV heuristic — “find the cell where only one digit fits”), producing an organic cascade instead of a mechanical left-to-right sweep. Your wrong entries get corrected first.",
+              "fr": "<b>Les coups sont choisis comme le ferait un humain.</b> La lecture automatique choisit à chaque fois la case vide qui a le moins de candidats restants (l'heuristique MRV — « trouver la case où un seul chiffre convient »), ce qui produit une cascade organique plutôt qu'un balayage mécanique de gauche à droite. Vos erreurs sont corrigées en premier.",
+              "zh": "<b>每一步都像真人一樣選擇。</b>自動遊玩會反覆挑選剩餘候選數最少的空格（MRV 啟發法——「找出只能填一個數字的格子」），形成自然的連鎖，而不是機械式地由左至右掃過。你填錯的格子會最先被修正。"
+            },
+            {
+              "en": "<b>Everything is a cancellable Swift Task.</b> The loop highlights the cell, waits, plays the digit with a small animation, and re-reads the speed slider on every move — so pause, resume and live speed changes just work.",
+              "fr": "<b>Tout est une Task Swift annulable.</b> La boucle surligne la case, attend, joue le chiffre avec une petite animation et relit le curseur de vitesse à chaque coup — pause, reprise et changement de vitesse en direct fonctionnent donc naturellement.",
+              "zh": "<b>一切都是可取消的 Swift Task。</b>迴圈會標示格子、等待、以小動畫填入數字，並在每一步重新讀取速度滑桿——因此暫停、繼續與即時調速都能順利運作。"
+            }
+          ]
+        },
+        {
+          "type": "p",
+          "t": {
+            "en": "Full technical write-up: <a href=\"https://github.com/vincentlauriat/Sudoku/blob/main/docs/AUTOPLAY.md\">docs/AUTOPLAY.md</a> — bitmask solver, uniqueness guarantee, move ordering and the animation loop.",
+            "fr": "Le détail technique complet : <a href=\"https://github.com/vincentlauriat/Sudoku/blob/main/docs/AUTOPLAY.md\">docs/AUTOPLAY.md</a> — solveur à masques de bits, garantie d'unicité, ordre des coups et boucle d'animation.",
+            "zh": "完整技術說明：<a href=\"https://github.com/vincentlauriat/Sudoku/blob/main/docs/AUTOPLAY.md\">docs/AUTOPLAY.md</a>——位元遮罩解題器、唯一解保證、出手順序與動畫迴圈。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "build",
+      "h": {
+        "en": "Build from source",
+        "fr": "Compiler depuis les sources",
+        "zh": "從原始碼建置"
+      },
+      "p": {
+        "en": "The repo is meant as an <b>example project</b>.",
+        "fr": "Le dépôt se veut un <b>projet d'exemple</b>.",
+        "zh": "這個儲存庫的定位是<b>範例專案</b>。"
+      },
+      "blocks": [
+        {
+          "type": "pre",
+          "code": "brew install xcodegen\ngit clone https://github.com/vincentlauriat/Sudoku.git\ncd Sudoku\nxcodegen generate\nopen Sudoku.xcodeproj   # then ⌘R"
+        },
+        {
+          "type": "p",
+          "t": {
+            "en": "Three strict layers (pure engine, <code>@MainActor</code> view model, SwiftUI views), unit tests, programmatic app icon, and a sign-notarize-staple release script. Start with the <a href=\"https://github.com/vincentlauriat/Sudoku/blob/main/ARCHITECTURE_EN.md\">architecture guide</a>.",
+            "fr": "Trois couches strictes (moteur pur, view model <code>@MainActor</code>, vues SwiftUI), des tests unitaires, une icône générée par code et un script de release qui signe, notarie et agrafe. Commencez par le <a href=\"https://github.com/vincentlauriat/Sudoku/blob/main/ARCHITECTURE_EN.md\">guide d'architecture</a>.",
+            "zh": "三個嚴格分層（純引擎、<code>@MainActor</code> view model、SwiftUI 視圖）、單元測試、以程式產生的 App 圖示，以及簽章、公證與裝訂一條龍的發行腳本。請從<a href=\"https://github.com/vincentlauriat/Sudoku/blob/main/ARCHITECTURE_EN.md\">架構指南</a>開始。"
+          }
+        }
+      ]
+    }
+  ],
+  "close": {
+    "h": {
+      "en": "Play, or watch it play",
+      "fr": "Jouez, ou regardez-le jouer",
+      "zh": "自己玩，或看它玩"
+    },
+    "p": {
+      "en": "Free and open source, for macOS 14 and later.",
+      "fr": "Gratuit et open source, pour macOS 14 et ultérieur.",
+      "zh": "免費開源，適用 macOS 14 以上。"
+    },
+    "actions": [
+      {
+        "primary": true,
+        "href": "https://github.com/vincentlauriat/Sudoku/releases/latest",
+        "label": {
+          "en": "Download for macOS",
+          "fr": "Télécharger pour macOS",
+          "zh": "下載 macOS 版"
+        }
+      },
+      {
+        "href": "https://github.com/vincentlauriat/Sudoku",
+        "label": {
+          "en": "View on GitHub",
+          "fr": "Voir sur GitHub",
+          "zh": "在 GitHub 上檢視"
+        }
+      }
+    ]
+  }
+}
